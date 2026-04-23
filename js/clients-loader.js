@@ -1,19 +1,11 @@
-/* ============================================
-   HEXI AGENCY - DYNAMIC LOADER
-   js/clients-loader.js
-
-   Fetches clients.json AND team.json from server
-   Populates clients marquee, clients grid, AND team grid
-   Supports dark/light theme swapping
-   ============================================ */
-
 (function () {
     'use strict';
 
     var CONFIG = {
-        /* Change to your server URL after deploy */
-        clientsUrl: 'http://localhost:3000/clients.json',
-        teamUrl: 'http://localhost:3000/team.json',
+        /* Your automation server URL — update after Railway deploy */
+      clientsUrl: 'https://YOUR-RAILWAY-URL.railway.app/clients.json',
+      teamUrl: 'https://YOUR-RAILWAY-URL.railway.app/team.json',
+
         marqueeDuplicates: 2
     };
 
@@ -22,9 +14,6 @@
         loadTeam();
     });
 
-    /* ============================================
-       LOAD CLIENTS
-       ============================================ */
     async function loadClients() {
         var data = null;
 
@@ -47,9 +36,6 @@
         }
     }
 
-    /* ============================================
-       LOAD TEAM
-       ============================================ */
     async function loadTeam() {
         var data = null;
 
@@ -69,9 +55,6 @@
         }
     }
 
-    /* ============================================
-       APPLY CURRENT THEME TO NEW IMAGES
-       ============================================ */
     function applyTheme() {
         var currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
         if (window.swapThemeImages) {
@@ -79,9 +62,6 @@
         }
     }
 
-    /* ============================================
-       RENDER MARQUEE (Home Page)
-       ============================================ */
     function renderMarquee(clients) {
         var track = document.querySelector('#page-home .clients-track');
         if (!track) return;
@@ -105,9 +85,6 @@
         return '<div class="client-logo-item"><div class="client-logo-inner">' + imgTag + '</div></div>';
     }
 
-    /* ============================================
-       RENDER CLIENTS GRID (Clients Page)
-       ============================================ */
     function renderClientsGrid(clients) {
         var grid = document.querySelector('#page-clients .clients-full-grid');
         if (!grid) return;
@@ -135,9 +112,6 @@
             '</div></div>';
     }
 
-    /* ============================================
-       RENDER TEAM GRID (Team Page)
-       ============================================ */
     function renderTeamGrid(team) {
         var grid = document.querySelector('#page-team .team-grid');
         if (!grid) return;
@@ -179,9 +153,6 @@
         '</div>';
     }
 
-    /* ============================================
-       UPDATE TRUST STATS
-       ============================================ */
     function updateTrustCount(count) {
         var counters = document.querySelectorAll('#page-clients .trust-stat .counter');
         if (counters.length > 0) {
@@ -190,9 +161,6 @@
         }
     }
 
-    /* ============================================
-       ESCAPE HTML
-       ============================================ */
     function esc(str) {
         var div = document.createElement('div');
         div.appendChild(document.createTextNode(str));
