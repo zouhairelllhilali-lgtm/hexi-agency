@@ -109,7 +109,7 @@
                    '🛠 *Service:* ' + (data.service || 'Not specified') + '\n\n' +
                    '💬 *Message:*\n' + data.message;
 
-        window.open('https://wa.me/212684064639?text=' + encodeURIComponent(text), '_blank');
+        window.open('https://wa.me/212772855818?text=' + encodeURIComponent(text), '_blank');
     }
 
     function isValidEmail(email) {
