@@ -1,29 +1,34 @@
 (function () {
     'use strict';
 
+    /* Auto-detect if running locally or on live website */
+    var isLocal = window.location.hostname === '127.0.0.1' ||
+                  window.location.hostname === 'localhost';
+
+    var SERVER_URL = isLocal
+        ? 'http://localhost:3000'
+        : 'https://YOUR-RAILWAY-URL.railway.app';
+
     var CONFIG = {
-        clientsUrl: 'http://localhost:3000/clients.json',
-        teamUrl: 'http://localhost:3000/team.json',
+        clientsUrl: SERVER_URL + '/clients.json',
+        teamUrl: SERVER_URL + '/team.json',
         marqueeDuplicates: 2
     };
 
     document.addEventListener('DOMContentLoaded', function () {
         console.log('🚀 Clients loader starting...');
+        console.log('🌐 Environment:', isLocal ? 'LOCAL' : 'LIVE');
+        console.log('📡 Server URL:', SERVER_URL);
         loadClients();
         loadTeam();
     });
 
     async function loadClients() {
         try {
-            console.log('📡 Fetching clients from:', CONFIG.clientsUrl);
             var response = await fetch(CONFIG.clientsUrl);
-            if (!response.ok) {
-                console.log('❌ Clients fetch failed with status:', response.status);
-                return;
-            }
+            if (!response.ok) return;
             var data = await response.json();
-            console.log('✅ Clients loaded:', data.count, 'clients');
-
+            console.log('✅ Clients loaded:', data.count);
             if (data && data.clients && data.clients.length > 0) {
                 renderMarquee(data.clients);
                 renderClientsGrid(data.clients);
@@ -31,54 +36,37 @@
                 applyTheme();
             }
         } catch (error) {
-            console.log('❌ Clients error:', error.message);
+            console.log('⚠️ Clients not loaded:', error.message);
         }
     }
 
     async function loadTeam() {
         try {
-            console.log('📡 Fetching team from:', CONFIG.teamUrl);
             var response = await fetch(CONFIG.teamUrl);
-            if (!response.ok) {
-                console.log('❌ Team fetch failed with status:', response.status);
-                return;
-            }
+            if (!response.ok) return;
             var data = await response.json();
-            console.log('✅ Team loaded:', data.count, 'members');
-            console.log('📋 Team data:', JSON.stringify(data.team));
-
+            console.log('✅ Team loaded:', data.count);
             if (data && data.team && data.team.length > 0) {
                 renderTeamGrid(data.team);
-                console.log('✅ Team grid rendered successfully');
-            } else {
-                console.log('⚠️ No team data found in response');
             }
         } catch (error) {
-            console.log('❌ Team error:', error.message);
+            console.log('⚠️ Team not loaded:', error.message);
         }
     }
 
     function applyTheme() {
         var currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-        if (window.swapThemeImages) {
-            window.swapThemeImages(currentTheme);
-        }
+        if (window.swapThemeImages) window.swapThemeImages(currentTheme);
     }
 
     function renderMarquee(clients) {
         var track = document.querySelector('#page-home .clients-track');
-        if (!track) {
-            console.log('⚠️ Marquee track not found');
-            return;
-        }
+        if (!track) return;
         var html = '';
         for (var d = 0; d < CONFIG.marqueeDuplicates; d++) {
-            clients.forEach(function (client) {
-                html += buildMarqueeItem(client);
-            });
+            clients.forEach(function (client) { html += buildMarqueeItem(client); });
         }
         track.innerHTML = html;
-        console.log('✅ Marquee rendered');
     }
 
     function buildMarqueeItem(client) {
@@ -93,18 +81,13 @@
 
     function renderClientsGrid(clients) {
         var grid = document.querySelector('#page-clients .clients-full-grid');
-        if (!grid) {
-            console.log('⚠️ Clients grid not found');
-            return;
-        }
+        if (!grid) return;
         var html = '';
         var delays = [0, 50, 100, 150];
         clients.forEach(function (client, index) {
-            var delay = delays[index % delays.length];
-            html += buildGridItem(client, delay);
+            html += buildGridItem(client, delays[index % delays.length]);
         });
         grid.innerHTML = html;
-        console.log('✅ Clients grid rendered');
     }
 
     function buildGridItem(client, delay) {
@@ -123,23 +106,15 @@
 
     function renderTeamGrid(team) {
         var grid = document.querySelector('#page-team .team-grid');
-        if (!grid) {
-            console.log('⚠️ Team grid element not found in DOM');
-            return;
-        }
-        console.log('🎯 Found team grid, rendering', team.length, 'members...');
-
+        if (!grid) return;
+        console.log('🎯 Rendering', team.length, 'team members');
         var html = '';
         var delays = [0, 100, 200];
-
         team.forEach(function (member, index) {
-            var delay = delays[index % delays.length];
-            html += buildTeamCard(member, delay);
-            console.log('👤 Rendering:', member.name, '|', member.role, '| Photo:', member.photo);
+            html += buildTeamCard(member, delays[index % delays.length]);
         });
-
         grid.innerHTML = html;
-        console.log('✅ Team grid updated with', team.length, 'members');
+        console.log('✅ Team grid updated');
     }
 
     function buildTeamCard(member, delay) {
@@ -149,13 +124,12 @@
                 tagsHtml += '<span class="team-expertise-tag">' + esc(tag) + '</span>';
             });
         }
-
         return '<div class="team-card reveal-up" data-delay="' + delay + '">' +
             '<div class="team-card-inner">' +
                 '<div class="team-avatar">' +
                     '<div class="team-avatar-glow"></div>' +
                     '<div class="team-avatar-inner">' +
-                        '<img src="' + member.photo + '" alt="' + esc(member.name) + '" loading="lazy" onerror="this.src=\'assets/images/team/placeholder.jpg\'">' +
+                        '<img src="' + member.photo + '" alt="' + esc(member.name) + '" loading="lazy">' +
                     '</div>' +
                     '<div class="team-avatar-ring"></div>' +
                 '</div>' +
