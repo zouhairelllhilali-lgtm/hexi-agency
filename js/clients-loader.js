@@ -1,13 +1,12 @@
 (function () {
     'use strict';
 
-    /* Auto-detect if running locally or on live website */
     var isLocal = window.location.hostname === '127.0.0.1' ||
                   window.location.hostname === 'localhost';
 
     var SERVER_URL = isLocal
         ? 'http://localhost:3000'
-        : 'https://YOUR-RAILWAY-URL.railway.app';
+        : 'https://hexi-server-production.up.railway.app';
 
     var CONFIG = {
         clientsUrl: SERVER_URL + '/clients.json',
@@ -16,9 +15,9 @@
     };
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('🚀 Clients loader starting...');
-        console.log('🌐 Environment:', isLocal ? 'LOCAL' : 'LIVE');
-        console.log('📡 Server URL:', SERVER_URL);
+        console.log('🚀 Loader starting...');
+        console.log('🌐 Mode:', isLocal ? 'LOCAL' : 'LIVE');
+        console.log('📡 Server:', SERVER_URL);
         loadClients();
         loadTeam();
     });
@@ -36,7 +35,7 @@
                 applyTheme();
             }
         } catch (error) {
-            console.log('⚠️ Clients not loaded:', error.message);
+            console.log('⚠️ Clients error:', error.message);
         }
     }
 
@@ -50,7 +49,7 @@
                 renderTeamGrid(data.team);
             }
         } catch (error) {
-            console.log('⚠️ Team not loaded:', error.message);
+            console.log('⚠️ Team error:', error.message);
         }
     }
 
